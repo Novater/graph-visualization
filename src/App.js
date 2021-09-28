@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import './App.css';
+import './assets/App.css';
 
 function App() {
   return (
