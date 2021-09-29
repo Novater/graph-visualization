@@ -164,6 +164,21 @@ const slice = createSlice({
         }
       };
     },
+    addEdge: (state) => {
+      const node1 = Math.floor(Math.random() * state.graphData.nodes.length);
+      const node2 = Math.floor(Math.random() * state.graphData.nodes.length);
+      return {
+        ...state,
+        graphData: {
+          ...state.graphData,
+          links: [...state.graphData.links, {
+            source: node1,
+            target: node2,
+            color: DEFAULT_EDGE_COLOR
+          }]
+        }
+      }
+    },
     dfsGraph: (state) => {
       const startNode = 0;
       const adjacencyMap = buildAdjacencyMap(state.graphData);

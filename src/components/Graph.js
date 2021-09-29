@@ -39,14 +39,15 @@ const Graph = () => {
 
   const initialize = () => { return dispatch(graphActions.initializeGraph()) };
   const addNode = () => { return dispatch(graphActions.addNode()) };
+  const addEdge = () => { return dispatch(graphActions.addEdge() )};
   const dfsGraph = () => { return dispatch(graphActions.dfsGraph()) };
   const bfsGraph = () => { return dispatch(graphActions.bfsGraph()) };
-
+  
   useEffect(() => {
     if (runningDFS) {
       const interval = setInterval(() => {
         return dispatch(graphActions.stepDFS());
-      }, 1000);
+      }, 100);
       return () => clearInterval(interval);
     }
   }, [runningDFS, dispatch]);
@@ -55,25 +56,30 @@ const Graph = () => {
     if (runningBFS) {
       const interval = setInterval(() => {
         return dispatch(graphActions.stepBFS());
-      }, 1000);
+      }, 100);
       return () => clearInterval(interval);
     }
   }, [runningBFS, dispatch]);
 
   return (
     <Box>
-      <Button onClick={initialize}>
-        Initialize Graph
-      </Button>
-      <Button onClick={addNode}>
-        Add Node
-      </Button>
-      <Button onClick={dfsGraph}>
-        Run Depth First Search
-      </Button>
-      <Button onClick={bfsGraph}>
-        Run Depth First Search
-      </Button>
+      <Box>
+        <Button disableElevation variant="contained" onClick={initialize}>
+          Initialize Graph
+        </Button>
+        <Button disableElevation variant="contained" onClick={addNode}>
+          Add Node
+        </Button>
+        <Button disableElevation variant="contained" onClick={addEdge}>
+          Add Edge
+        </Button>
+        <Button disableElevation variant="contained" onClick={dfsGraph}>
+          Run Depth First Search
+        </Button>
+        <Button disableElevation variant="contained" onClick={bfsGraph}>
+          Run Breadth First Search
+        </Button>
+      </Box>
       <ForceGraph2D
         graphData={graphData}
         // nodeThreeObject={({ id }) => drawNode(id)}
