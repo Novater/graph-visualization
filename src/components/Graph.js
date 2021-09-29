@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import ForceGraph3D from 'react-force-graph-3d';
+import ForceGraph2D from 'react-force-graph-2d';
 import { Box, Button } from '@mui/material';
 import { graphActions } from '../slices/graphSlice';
 import PropTypes from 'prop-types';
@@ -27,7 +27,6 @@ const Graph = () => {
     return new THREE.Mesh(
       new THREE.BoxGeometry(10, 10, 10),
       new THREE.MeshLambertMaterial({
-        color: getColor(),
         transparent: true,
         opacity: DEFAULT_OPACITY
       })
@@ -36,21 +35,30 @@ const Graph = () => {
   
   const { graphData } = graph;
   const { runningDFS } = graph;
+  const { runningBFS } = graph;
 
   const initialize = () => { return dispatch(graphActions.initializeGraph()) };
   const addNode = () => { return dispatch(graphActions.addNode()) };
   const dfsGraph = () => { return dispatch(graphActions.dfsGraph()) };
+  const bfsGraph = () => { return dispatch(graphActions.bfsGraph()) };
 
   useEffect(() => {
     if (runningDFS) {
       const interval = setInterval(() => {
         return dispatch(graphActions.stepDFS());
-      }, 2000);
+      }, 1000);
       return () => clearInterval(interval);
     }
+  }, [runningDFS, dispatch]);
 
-    return null;
-  }, [runningDFS]);
+  useEffect(() => {
+    if (runningBFS) {
+      const interval = setInterval(() => {
+        return dispatch(graphActions.stepBFS());
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [runningBFS, dispatch]);
 
   return (
     <Box>
@@ -61,19 +69,20 @@ const Graph = () => {
         Add Node
       </Button>
       <Button onClick={dfsGraph}>
-        Depth First Search
+        Run Depth First Search
       </Button>
-      {runningDFS
-        ? <Box>DFS is running</Box>
-        : <Box>DFS is not running</Box>
-      }
-      <ForceGraph3D
+      <Button onClick={bfsGraph}>
+        Run Depth First Search
+      </Button>
+      <ForceGraph2D
         graphData={graphData}
-        nodeThreeObject={({ id }) => drawNode(id)}
+        // nodeThreeObject={({ id }) => drawNode(id)}
         linkWidth={3}
         backgroundColor={DEFAULT_BGC}
         linkOpacity={DEFAULT_LINK_OPACITY}
         enableZoomInteraction={false}
+        warmupTicks={100}
+        cooldownTicks={1}
       />
     </Box>
   );
