@@ -1,21 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { 
-  DEFAULT_GRAPH_NODES,
+  DEFAULT_GRAPH_DIMENSION_X,
+  DEFAULT_GRAPH_DIMENSION_Y,
   DEFAULT_BGC,
   DEFAULT_OPACITY,
   DEFAULT_NODE_COLOR,
-  DEFAULT_EDGE_COLOR
+  DEFAULT_EDGE_COLOR,
+  DEFAULT_PRESET_GRAPH_NODES
 } from '../config/index';
 
 const initialState = {
     graphData: {
-      nodes: [ { id: 0, name: '0', color: DEFAULT_NODE_COLOR } ],
-      links: [],
+      nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(0)),
       searchState: {
-        startNode: 0,
-        stack: [0],
-        visited: [],
-        adjacencyMap: null
+        startNode: '0,0',
+        stack: ['0,0'],
+        visited: []
       }
     },
     runningDFS: false,
@@ -28,101 +28,129 @@ const getNodeToSource = (graphData, maxNeighbors) => {
   const nodes = graphDataObj.nodes;
   const neighbors = {};
 
-  nodes.map(node => neighbors[node.id] = [] );
-
-  for (const link of links) {
-    neighbors[link.source].push(link.target);
-    neighbors[link.target].push(link.source);
-  }
   let randomNodeSource = Math.floor(Math.random() * nodes.length);
-  console.log(randomNodeSource);
-  // while (neighbors[randomNodeSource].length > maxNeighbors) {
-  //   randomNodeSource = Math.floor(Math.random() * nodes.length);
-  // }
 
-  return randomNodeSource;
+  return graphDataObj.nodes[randomNodeSource];
 };
 
-const buildAdjacencyMap = (graphData) => {
-  let graphDataObj = JSON.parse(JSON.stringify(graphData));
-  const links = graphDataObj.links;
-  const nodes = graphDataObj.nodes;
-  const neighbors = {};
+// const generatePresetGraph = () => {
+//   const nodes = DEFAULT_PRESET_GRAPH_NODES.nodes;
+//   const links = [];
+//   for (const node of nodes) {
+//     const nodeXY = node.name.split(',');
+//     const nx = Number(nodeXY[0]);
+//     const ny = Number(nodeXY[1]);
+    
+//     const left = nx - 1;
+//     const right = nx + 1;
+//     const up = ny - 1;
+//     const down = ny + 1;
+    
+//     if (left > 0) links.push({ source: node.id, target: `${left},${ny}`, color: DEFAULT_EDGE_COLOR });
+//     if (right <= 14) links.push({ source: node.id, target: `${right},${ny}`, color: DEFAULT_EDGE_COLOR });
+//     if (up > 0) links.push({ source: node.id, target: `${nx},${up}`, color: DEFAULT_EDGE_COLOR });
+//     if (down <= 14) links.push({ source: node.id, target: `${nx},${down}`, color: DEFAULT_EDGE_COLOR });
+//   }
 
-  nodes.map(node => neighbors[node.id] = []);
+//   return {
+//     nodes,
+//     links
+//   }
+// }
 
-  for (const link of links) {
-    neighbors[link.source].push(link.target);
-    neighbors[link.target].push(link.source);
-  }
+// const buildAdjacencyMap = (graphData) => {
+//   let graphDataObj = JSON.parse(JSON.stringify(graphData));
+//   const links = graphDataObj.links;
+//   const nodes = graphDataObj.nodes;
+//   const neighbors = {};
 
-  return neighbors;
-};
+//   nodes.map(node => neighbors[node.id] = []);
+
+//   for (const link of links) {
+//     if (neighbors[link.source].indexOf(link.target) < 0) neighbors[link.source].push(link.target);
+//     if (neighbors[link.target].indexOf(link.source) < 0) neighbors[link.target].push(link.source);
+//   }
+
+//   return neighbors;
+// };
 
 const stepDFS = (dfsState) => {
-  const stack = dfsState.stack;
-  const visited = dfsState.visited;
-  const adjacencyMap = dfsState.adjacencyMap;
+  // const stack = dfsState.stack;
+  // const visited = dfsState.visited;
+  // const adjacencyMap = dfsState.adjacencyMap;
 
-  if (stack.length === 0) {
-    return;
-  }
+  // if (stack.length === 0) {
+  //   return;
+  // }
 
-  const currNode = stack.shift();
-  if (visited[currNode]) {
-    return {
-      ...dfsState,
-      stack
-    }
-  }
+  // const currNode = stack.shift();
+  // const currNodeXY = currNode.split(',');
+  // const nx = currNodeXY[0];
+  // const ny = currNodeXY[1];
 
-  visited[currNode] = true;
+  // if (visited[nx][ny]) {
+  //   return {
+  //     ...dfsState,
+  //     stack
+  //   }
+  // }
 
-  const neighbors = adjacencyMap[currNode];
+  // visited[nx][ny] = true;
 
-  for (const neighbor of neighbors) {
-    if (visited[neighbor]) continue;
-    stack.unshift(neighbor);
-  }
+  // const neighbors = adjacencyMap[currNode];
+  // for (const neighbor of neighbors) {
+  //   const neighborXY = neighbor.split(',');
+  //   const neighborX = neighborXY[0];
+  //   const neighborY = neighborXY[1];
+  //   if (visited[neighborX][neighborY]) continue;
+  //   stack.unshift(neighbor);
+  // }
 
-  return {
-    ...dfsState,
-    stack,
-    visited
-  };
+  // return {
+  //   ...dfsState,
+  //   stack,
+  //   visited
+  // };
 };
 
 const stepBFS = (dfsState) => {
-  const stack = dfsState.stack;
-  const visited = dfsState.visited;
-  const adjacencyMap = dfsState.adjacencyMap;
+  // const stack = dfsState.stack;
+  // const visited = dfsState.visited;
+  // const adjacencyMap = dfsState.adjacencyMap;
 
-  if (stack.length === 0) {
-    return;
-  }
+  // if (stack.length === 0) {
+  //   return;
+  // }
 
-  const currNode = stack.shift();
-  if (visited[currNode]) {
-    return {
-      ...dfsState,
-      stack
-    }
-  }
+  // const currNode = stack.shift();
+  // const currNodeXY = currNode.split(',');
+  // const nx = currNodeXY[0];
+  // const ny = currNodeXY[1];
 
-  visited[currNode] = true;
+  // if (visited[nx][ny]) {
+  //   return {
+  //     ...dfsState,
+  //     stack
+  //   }
+  // }
 
-  const neighbors = adjacencyMap[currNode];
+  // visited[nx][ny] = true;
 
-  for (const neighbor of neighbors) {
-    if (visited[neighbor]) continue;
-    stack.push(neighbor);
-  }
+  // const neighbors = adjacencyMap[currNode];
 
-  return {
-    ...dfsState,
-    stack,
-    visited
-  };
+  // for (const neighbor of neighbors) {
+  //   const neighborXY = neighbor.split(',');
+  //   const neighborX = neighborXY[0];
+  //   const neighborY = neighborXY[1];
+  //   if (visited[neighborX][neighborY]) continue;
+  //   stack.push(neighbor);
+  // }
+
+  // return {
+  //   ...dfsState,
+  //   stack,
+  //   visited
+  // };
 };
 
 const slice = createSlice({
@@ -131,10 +159,9 @@ const slice = createSlice({
   reducers: {
     initializeGraph: (state) => {
       const defaultData = {
-        nodes: [ { id: 0, name: '0', color: DEFAULT_NODE_COLOR } ],
-        links: []
+        nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(0))
       };
-      console.log('initializing graph');
+
       return {
         ...state,
         graphData: defaultData,
@@ -142,144 +169,164 @@ const slice = createSlice({
         runningBFS: false
       }
     },
-    addNode: (state) => {
-      const newNodeId = state.graphData.nodes.length;
-      const sourceNode = getNodeToSource(state.graphData, 5);
+    initializePresetGraph: (state) => {
       return {
         ...state,
         graphData: {
-          ...state.graphData,
-          nodes: [...state.graphData.nodes, { 
-            id: newNodeId,
-            name: newNodeId,
-            color: DEFAULT_NODE_COLOR
-          }],
-          links: [...state.graphData.links, 
-            { 
-              source: sourceNode,
-              target: newNodeId,
-              color: DEFAULT_EDGE_COLOR
-            }
-          ]
-        }
-      };
+          nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(1))
+        },
+        runningDFS: false,
+        runningBFS: false
+      }
+    },
+    addNode: (state) => {
+      // const newNodeId = state.graphData.nodes.length;
+      // const sourceNode = getNodeToSource(state.graphData, 5);
+      // return {
+      //   ...state,
+      //   graphData: {
+      //     ...state.graphData,
+      //     nodes: [...state.graphData.nodes, { 
+      //       id: newNodeId,
+      //       name: newNodeId,
+      //       color: DEFAULT_NODE_COLOR
+      //     }],
+      //     links: [...state.graphData.links, 
+      //       { 
+      //         source: sourceNode.id,
+      //         target: newNodeId,
+      //         color: DEFAULT_EDGE_COLOR
+      //       }
+      //     ]
+      //   }
+      // };
     },
     addEdge: (state) => {
-      const node1 = Math.floor(Math.random() * state.graphData.nodes.length);
-      const node2 = Math.floor(Math.random() * state.graphData.nodes.length);
-      return {
-        ...state,
-        graphData: {
-          ...state.graphData,
-          links: [...state.graphData.links, {
-            source: node1,
-            target: node2,
-            color: DEFAULT_EDGE_COLOR
-          }]
-        }
-      }
+      // const node1 = Math.floor(Math.random() * state.graphData.nodes.length);
+      // const node2 = Math.floor(Math.random() * state.graphData.nodes.length);
+      // return {
+      //   ...state,
+      //   graphData: {
+      //     ...state.graphData,
+      //     links: [...state.graphData.links, {
+      //       source: node1,
+      //       target: node2,
+      //       color: DEFAULT_EDGE_COLOR
+      //     }]
+      //   }
+      // }
     },
     dfsGraph: (state) => {
-      const startNode = 0;
-      const adjacencyMap = buildAdjacencyMap(state.graphData);
-      const stack = [0];
-      const visited = [];
+      // const startNode = '0,0';
+      // const adjacencyMap = buildAdjacencyMap(state.graphData);
+      // const stack = ['0,0'];
+      // const visited = [...Array(15)].map((row => Array(15).fill(false)));
 
-      return {
-        ...state,
-        runningDFS: true,
-        graphData: {
-          ...state.graphData,
-          searchState: {
-            startNode: startNode,
-            adjacencyMap: adjacencyMap,
-            stack: stack,
-            visited: visited
-          }
-        }
-      };
+      // return {
+      //   ...state,
+      //   runningDFS: true,
+      //   graphData: {
+      //     ...state.graphData,
+      //     searchState: {
+      //       startNode: startNode,
+      //       adjacencyMap: adjacencyMap,
+      //       stack: stack,
+      //       visited: visited
+      //     }
+      //   }
+      // };
     },
     stepDFS: (state) => {
-      const graphData = JSON.parse(JSON.stringify(state.graphData));
-      const newDFSState = stepDFS(graphData.searchState);
+      // const graphData = JSON.parse(JSON.stringify(state.graphData));
+      // const newDFSState = stepDFS(graphData.searchState);
+      // if (!newDFSState) {
+      //   return {
+      //     ...state,
+      //     runningDFS: false
+      //   }
+      // }
 
-      if (!newDFSState) {
-        return {
-          ...state,
-          runningDFS: false
-        }
-      }
+      // const newNodes = graphData.nodes.map((node) => {
+      //   const nodeXY = node.id.split(',');
+      //   const nx = nodeXY[0];
+      //   const ny = nodeXY[1];
+      //   return newDFSState.visited[nx][ny] ? { ...node, color: 'red' } : { ...node };
+      // });
 
-      const newNodes = graphData.nodes.map((node) => newDFSState.visited[node.id] ? { ...node, color: 'red' } : { ...node });
-      const newEdges = graphData.links.map((link) => { 
-        if (newDFSState.visited[link.source] && newDFSState.visited[link.target]) {
-          return { ...link, color: 'black' }
-        } else if (newDFSState.visited[link.source] || newDFSState.visited[link.target]) {
-          return { ...link, color: 'orange' }
-        } else {
-          return { ...link }
-        }
-      });
-      return {
-        ...state,
-        graphData: {
-          ...state.graphData,
-          nodes: newNodes,
-          links: newEdges,
-          searchState: newDFSState
-        }
-      };
+      // const newEdges = graphData.links.map((link) => { 
+      //   if (newDFSState.visited[link.source] && newDFSState.visited[link.target]) {
+      //     return { ...link, color: 'black' }
+      //   } else if (newDFSState.visited[link.source] || newDFSState.visited[link.target]) {
+      //     return { ...link, color: 'orange' }
+      //   } else {
+      //     return { ...link }
+      //   }
+      // });
+      // return {
+      //   ...state,
+      //   graphData: {
+      //     ...state.graphData,
+      //     nodes: newNodes,
+      //     links: newEdges,
+      //     searchState: newDFSState
+      //   }
+      // };
     },
     bfsGraph: (state) => {
-      const startNode = 0;
-      const adjacencyMap = buildAdjacencyMap(state.graphData);
-      const stack = [0];
-      const visited = [];
+      // const startNode = '0,0';
+      // const adjacencyMap = buildAdjacencyMap(state.graphData);
+      // const stack = ['0,0'];
+      // const visited = [...Array(15)].map((row => Array(15).fill(false)));
 
-      return {
-        ...state,
-        runningBFS: true,
-        graphData: {
-          ...state.graphData,
-          searchState: {
-            startNode: startNode,
-            adjacencyMap: adjacencyMap,
-            stack: stack,
-            visited: visited
-          }
-        }
-      };     
+      // return {
+      //   ...state,
+      //   runningBFS: true,
+      //   graphData: {
+      //     ...state.graphData,
+      //     searchState: {
+      //       startNode: startNode,
+      //       adjacencyMap: adjacencyMap,
+      //       stack: stack,
+      //       visited: visited
+      //     }
+      //   }
+      // };     
     },
     stepBFS: (state) => {
-      const graphData = JSON.parse(JSON.stringify(state.graphData));
-      const newBFSState = stepBFS(graphData.searchState);
+      // const graphData = JSON.parse(JSON.stringify(state.graphData));
+      // const newBFSState = stepBFS(graphData.searchState);
 
-      if (!newBFSState) {
-        return {
-          ...state,
-          runningBFS: false
-        }
-      }
+      // if (!newBFSState) {
+      //   return {
+      //     ...state,
+      //     runningBFS: false
+      //   }
+      // }
 
-      const newNodes = graphData.nodes.map((node) => newBFSState.visited[node.id] ? { ...node, color: 'red' } : { ...node });
-      const newEdges = graphData.links.map((link) => { 
-        if (newBFSState.visited[link.source] && newBFSState.visited[link.target]) {
-          return { ...link, color: 'black' }
-        } else if (newBFSState.visited[link.source] || newBFSState.visited[link.target]) {
-          return { ...link, color: 'orange' }
-        } else {
-          return { ...link }
-        }
-      });
-      return {
-        ...state,
-        graphData: {
-          ...state.graphData,
-          nodes: newNodes,
-          links: newEdges,
-          searchState: newBFSState
-        }
-      };
+      // const newNodes = graphData.nodes.map((node) => {
+      //   const nodeXY = node.id.split(',');
+      //   const nx = nodeXY[0];
+      //   const ny = nodeXY[1];
+      //   return newBFSState.visited[nx][ny] ? { ...node, color: 'red' } : { ...node };
+      // });
+
+      // // const newEdges = graphData.links.map((link) => { 
+      // //   if (newBFSState.visited[link.source] && newBFSState.visited[link.target]) {
+      // //     return { ...link, color: 'black' }
+      // //   } else if (newBFSState.visited[link.source] || newBFSState.visited[link.target]) {
+      // //     return { ...link, color: 'orange' }
+      // //   } else {
+      // //     return { ...link }
+      // //   }
+      // // });
+      // return {
+      //   ...state,
+      //   graphData: {
+      //     ...state.graphData,
+      //     nodes: newNodes,
+      //     searchState: newBFSState
+      //   }
+      // };
     },
   }
 });
