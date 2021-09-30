@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     height: '100%',
-    padding: 80,
+    padding: 30,
     backgroundColor: theme.palette.secondary.main
   },
   actionButton: {
@@ -56,7 +56,6 @@ const Graph = () => {
   const classes = useStyles();
 
   const nodes = useSelector((state) => state.graph.nodes, shallowEqual);
-  console.log(nodes)
   const { runningDFS, runningBFS } = useSelector((state) => state.graph);
 
   const initializeEmpty = () => dispatch(graphActions.initializeEmptyGraph());

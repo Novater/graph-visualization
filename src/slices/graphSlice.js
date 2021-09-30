@@ -169,7 +169,7 @@ const slice = createSlice({
       const nodeX = nodeXY[0];
       const nodeY = nodeXY[1];
       const newNodes = JSON.parse(JSON.stringify(state.nodes));
-      newNodes[nodeX][nodeY] = 1;
+      newNodes[nodeX][nodeY] = 2;
 
       return {
         ...state,
