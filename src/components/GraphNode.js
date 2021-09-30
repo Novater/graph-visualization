@@ -1,36 +1,53 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { graphActions } from '../slices/graphSlice';
 import { 
   DEFAULT_GRAPH_DIMENSION_X,
-  DEFAULT_GRAPH_DIMENSION_Y,
-  DEFAULT_BGC,
-  DEFAULT_OPACITY,
-  DEFAULT_NODE_COLOR,
-  DEFAULT_EDGE_COLOR,
-  DEFAULT_LINK_OPACITY,
-  DEFAULT_NODE_SIZE,
-  DEFAULT_EDGE_SIZE,
-  DEFAULT_ALPHA
+  DEFAULT_SCREEN_X,
+  DEFAULT_SCREEN_Y
 } from '../config/index';
 
 const useStyles = makeStyles(theme => ({
-  node: {
-    width: 40,
-    height: 40,
+  blockedNode: {
+    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
+    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
     borderColor: '#283747',
+    borderRadius: 5,
+    backgroundColor: theme.palette.warning.main
+  },
+  emptyNode: {
+    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
+    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
+    display: 'inline-block',
+    border: '2px solid',
+    borderColor: theme.palette.warning.main,
+    backgroundColor: theme.palette.secondary.dark,
     borderRadius: 5
   }
 }));
 
-const GraphNode = ({ className, ...rest }) => {
+const isNodeEmpty = (id, nodes) => {
+  const idXY = id.split(',');
+  const idRow = idXY[0];
+  const idCol = idXY[1];
+
+  return nodes[idRow][idCol];
+}
+const GraphNode = ({ id }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const nodes = useSelector((state) => state.graph.nodes);
+  const selectStartNode = (action) => dispatch(graphActions.selectStartNode(action));
 
   return (
-    <div className={className ? className : classes.node}>
-    </div>
+    <svg onClick={() => selectStartNode(id)} id={id} className={isNodeEmpty(id, nodes) ? classes.emptyNode : classes.blockedNode }>
+    </svg>
   );
 };
 

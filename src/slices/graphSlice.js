@@ -10,27 +10,14 @@ import {
 } from '../config/index';
 
 const initialState = {
-    graphData: {
-      nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(0)),
-      searchState: {
-        startNode: '0,0',
-        stack: ['0,0'],
-        visited: []
-      }
+    nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(0)),
+    searchState: {
+      startNode: '',
+      stack: [],
+      visited: []
     },
     runningDFS: false,
     runningBFS: false
-};
-
-const getNodeToSource = (graphData, maxNeighbors) => {
-  let graphDataObj = JSON.parse(JSON.stringify(graphData));
-  const links = graphDataObj.links;
-  const nodes = graphDataObj.nodes;
-  const neighbors = {};
-
-  let randomNodeSource = Math.floor(Math.random() * nodes.length);
-
-  return graphDataObj.nodes[randomNodeSource];
 };
 
 // const generatePresetGraph = () => {
@@ -157,64 +144,37 @@ const slice = createSlice({
   name: 'graph',
   initialState,
   reducers: {
-    initializeGraph: (state) => {
-      const defaultData = {
-        nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(0))
-      };
+    initializeEmptyGraph: (state) => {
+      const defaultData = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(1));
 
       return {
         ...state,
-        graphData: defaultData,
+        nodes: defaultData,
         runningDFS: false,
         runningBFS: false
       }
     },
-    initializePresetGraph: (state) => {
+    initializeRandomGraph: (state) => {
       return {
         ...state,
-        graphData: {
-          nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(1))
-        },
+        nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => {
+            return [...Array(DEFAULT_GRAPH_DIMENSION_X)].map((cell) => Math.floor(Math.random() * 2))
+        }),
         runningDFS: false,
         runningBFS: false
       }
     },
-    addNode: (state) => {
-      // const newNodeId = state.graphData.nodes.length;
-      // const sourceNode = getNodeToSource(state.graphData, 5);
-      // return {
-      //   ...state,
-      //   graphData: {
-      //     ...state.graphData,
-      //     nodes: [...state.graphData.nodes, { 
-      //       id: newNodeId,
-      //       name: newNodeId,
-      //       color: DEFAULT_NODE_COLOR
-      //     }],
-      //     links: [...state.graphData.links, 
-      //       { 
-      //         source: sourceNode.id,
-      //         target: newNodeId,
-      //         color: DEFAULT_EDGE_COLOR
-      //       }
-      //     ]
-      //   }
-      // };
-    },
-    addEdge: (state) => {
-      // const node1 = Math.floor(Math.random() * state.graphData.nodes.length);
-      // const node2 = Math.floor(Math.random() * state.graphData.nodes.length);
-      // return {
-      //   ...state,
-      //   graphData: {
-      //     ...state.graphData,
-      //     links: [...state.graphData.links, {
-      //       source: node1,
-      //       target: node2,
-      //       color: DEFAULT_EDGE_COLOR
-      //     }]
-      //   }
-      // }
+    selectStartNode: (state, action) => {
+      const nodeXY = action.payload.split(',');
+      const nodeX = nodeXY[0];
+      const nodeY = nodeXY[1];
+      const newNodes = JSON.parse(JSON.stringify(state.nodes));
+      newNodes[nodeX][nodeY] = 1;
+
+      return {
+        ...state,
+        nodes: newNodes
+      }
     },
     dfsGraph: (state) => {
       // const startNode = '0,0';
