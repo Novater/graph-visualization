@@ -87,20 +87,14 @@ const Graph = () => {
   }, [runningBFS, dispatch]);
 
   return (
-    <Container className={classes.root} maxWidth="xl">
-      <Box className={classes.navbar}>Project by Jonathan Ku</Box>
+    <Container className={classes.root} maxWidth='xl'>
+      <Box className={classes.navbar}>Vizualize your Problem</Box>
       <Box className={classes.actionbar}>
-        <Button color='primary' variant="contained" className={classes.actionButton} onClick={initializeEmpty}>
+        <Button variant='contained' className={classes.actionButton} onClick={initializeEmpty}>
           Initialize Empty Graph
         </Button>
-        <Button variant="contained" className={classes.actionButton} onClick={initializeRandom}>
+        <Button variant='contained' className={classes.actionButton} onClick={initializeRandom}>
           Initialize Random Graph
-        </Button>
-        <Button variant="contained" className={classes.actionButton} onClick={dfsGraph}>
-          Run Depth First Search
-        </Button>
-        <Button variant="contained" className={classes.actionButton} onClick={bfsGraph}>
-          Run Breadth First Search
         </Button>
       </Box>
       {

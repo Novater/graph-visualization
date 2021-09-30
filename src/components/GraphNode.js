@@ -16,16 +16,16 @@ const useStyles = makeStyles(theme => ({
     height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
-    borderColor: '#283747',
+    borderColor: theme.palette.secondary.main,
     borderRadius: 5,
-    backgroundColor: theme.palette.warning.main
+    backgroundColor: theme.palette.primary.main
   },
   emptyNode: {
     width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
     height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
-    borderColor: theme.palette.warning.main,
+    borderColor: theme.palette.secondary.main,
     backgroundColor: theme.palette.secondary.dark,
     borderRadius: 5
   }
