@@ -8,6 +8,10 @@ import { configureStore } from './store/index.js';
 
 const store = configureStore();
 
+// store.subscribe(() => {
+//   console.log(store.getState());
+// });
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

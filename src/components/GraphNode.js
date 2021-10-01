@@ -38,13 +38,44 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.main,
     backgroundColor: theme.palette.primary.dark,
     borderRadius: 5
+  },
+  startNode: {
+    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
+    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
+    display: 'inline-block',
+    border: '2px solid',
+    borderColor: theme.palette.secondary.main,
+    backgroundColor: 'green',
+    borderRadius: 5    
+  },
+  endNode: {
+    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
+    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
+    display: 'inline-block',
+    border: '2px solid',
+    borderColor: theme.palette.secondary.main,
+    backgroundColor: 'red',
+    borderRadius: 5    
+  },
+  pathNode: {
+    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
+    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
+    display: 'inline-block',
+    border: '2px solid',
+    borderColor: theme.palette.secondary.main,
+    backgroundColor: 'yellow',
+    borderRadius: 5    
+  },
+  stackNode: {
+    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
+    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
+    display: 'inline-block',
+    border: '2px solid',
+    borderColor: theme.palette.secondary.main,
+    backgroundColor: 'orange',
+    borderRadius: 5    
   }
 }));
-
-const isNodeEmpty = (node) => node === 1;
-
-
-const isNodeHighlighted = (node) => node === 2;
 
 const GraphNode = ({ id }) => {
   const classes = useStyles();
@@ -53,12 +84,47 @@ const GraphNode = ({ id }) => {
   const idXY = id.split(',');
 
   const node = useSelector((state) => state.graph.nodes[idXY[0]][idXY[1]]);
+  const visited = useSelector((state) => state.graph.visited[idXY[0]][idXY[1]]);
+  const { startNode, startNodeSelected, endNode, endNodeSelected, shortestPath, stack, buildingWall } = useSelector((state) => state.graph);
+
+  const isNodeStartNode = (id) => id === startNode;
+  const isNodeEndNode = (id) => id === endNode;
+  const isPathNode = (id) => shortestPath.indexOf(id) >= 0;
+  const isStackNode = (id) => stack.indexOf(id) >= 0;
+  const isNodeEmpty = (node) => node === 1;
+  const pathNumber = shortestPath.indexOf(id) >= 0 ? shortestPath.indexOf(id) + 1 : '';
   const selectStartNode = (action) => dispatch(graphActions.selectStartNode(action));
-  const nodeType = isNodeEmpty(node) ? classes.emptyNode : (isNodeHighlighted(node) ? classes.highlightedNode : classes.blockedNode);
+  const selectEndNode = (action) => dispatch(graphActions.selectEndNode(action));
+  const addWall = (action) => {
+    dispatch(graphActions.addWall(action));
+  }
+
+  const nodeType = (node, visited, id) => {
+    if (isNodeStartNode(id)) {
+      return classes.startNode;
+    }
+    if (isNodeEndNode(id)) {
+      return classes.endNode;
+    }
+    if (isPathNode(id)) {
+      return classes.pathNode;
+    }
+    if (isStackNode(id)) {
+      return classes.stackNode;
+    }
+    if (visited) {
+      return classes.highlightedNode;
+    };
+
+    if (isNodeEmpty(node)) {
+      return classes.emptyNode;
+    }
+    return classes.blockedNode;
+  };
 
   return (
-    <Box onClick={() => selectStartNode(id)} id={id} className={nodeType}>
-    </Box>
+    <svg onClick={() => { buildingWall ? addWall(id) : (startNodeSelected ? selectEndNode(id) : selectStartNode(id)) }} id={id} className={nodeType(node, visited, id)}>
+    </svg>
   );
 };
 
