@@ -8,7 +8,7 @@ import {
 } from '../config/index';
 
 const initialState = {
-    nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(0)),
+    nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(1)),
     startNode: '',
     startNodeSelected: false,
     endNode: '',
@@ -25,7 +25,9 @@ const initialState = {
     shortestPath: [],
     buildingWall: false,
     startTime: null,
-    endTime: null
+    endTime: null,
+    numRows: DEFAULT_GRAPH_DIMENSION_Y,
+    numCols: DEFAULT_GRAPH_DIMENSION_X
 };
 
 const oneDFSStep = (startNode, endNode, nodes, stack, visited) => {
@@ -72,9 +74,9 @@ const oneDFSStep = (startNode, endNode, nodes, stack, visited) => {
   const right = Number(currNodeCol) + 1;
 
   if (up >= 0) neighbors.push(`${up},${currNodeCol}`);
-  if (down < DEFAULT_GRAPH_DIMENSION_Y) neighbors.push(`${down},${currNodeCol}`);
+  if (down < nodes.length) neighbors.push(`${down},${currNodeCol}`);
   if (left >= 0) neighbors.push(`${currNodeRow},${left}`);
-  if (right < DEFAULT_GRAPH_DIMENSION_X) neighbors.push(`${currNodeRow},${right}`);
+  if (right < nodes[0].length) neighbors.push(`${currNodeRow},${right}`);
 
   for (const neighbor of neighbors) {
     const neighborRowCol = neighbor.split(',');
@@ -137,9 +139,9 @@ const oneBFSStep = (startNode, endNode, nodes, stack, visited) => {
   const right = Number(currNodeCol) + 1;
 
   if (up >= 0) neighbors.push(`${up},${currNodeCol}`);
-  if (down < DEFAULT_GRAPH_DIMENSION_Y) neighbors.push(`${down},${currNodeCol}`);
+  if (down < nodes.length) neighbors.push(`${down},${currNodeCol}`);
   if (left >= 0) neighbors.push(`${currNodeRow},${left}`);
-  if (right < DEFAULT_GRAPH_DIMENSION_X) neighbors.push(`${currNodeRow},${right}`);
+  if (right < nodes[0].length) neighbors.push(`${currNodeRow},${right}`);
 
   for (const neighbor of neighbors) {
     const neighborRowCol = neighbor.split(',');
@@ -237,9 +239,9 @@ const oneDijkstraStep = (startNode, endNode, nodes, stack, visited, parent, dist
   const right = Number(currNodeCol) + 1;
 
   if (up >= 0) neighbors.push(`${up},${currNodeCol}`);
-  if (down < DEFAULT_GRAPH_DIMENSION_Y) neighbors.push(`${down},${currNodeCol}`);
+  if (down < nodes.length) neighbors.push(`${down},${currNodeCol}`);
   if (left >= 0) neighbors.push(`${currNodeRow},${left}`);
-  if (right < DEFAULT_GRAPH_DIMENSION_X) neighbors.push(`${currNodeRow},${right}`);
+  if (right < nodes[0].length) neighbors.push(`${currNodeRow},${right}`);
 
   for (const neighbor of neighbors) {
     const neighborRowCol = neighbor.split(',');
@@ -275,7 +277,7 @@ const slice = createSlice({
   initialState,
   reducers: {
     initializeEmptyGraph: (state) => {
-      const defaultData = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(DEFAULT_GRAPH_DIMENSION_X).fill(1));
+      const defaultData = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row) => new Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(1));
 
       return {
         ...state,
@@ -284,15 +286,15 @@ const slice = createSlice({
         endNode: '',
         endNodeSelected: false,
         stack: [],
-        visited: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(false))),
+        visited: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(false))),
         nodes: defaultData,
         runningDFS: false,
         runningBFS: false,
         runningDijkstra: false,
         runningManhattanDijkstra: false,
         pathExists: false,
-        parent: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(null))),
-        distances: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(Infinity))),
+        parent: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null))),
+        distances: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity))),
         shortestPath: [],
         buildingWall: false,
         startTime: null,
@@ -302,22 +304,22 @@ const slice = createSlice({
     initializeRandomGraph: (state) => {
       return {
         ...state,
-        nodes: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row) => {
-            return [...Array(DEFAULT_GRAPH_DIMENSION_X)].map((cell) => Math.floor(Math.random() * 2))
+        nodes: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row) => {
+            return [...Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X)].map((cell) => Math.floor(Math.random() * 2))
         }),
         startNode: '',
         startNodeSelected: false,
         endNode: '',
         endNodeSelected: false,
         stack: [],
-        visited: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(false))),
+        visited: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(false))),
         runningDFS: false,
         runningBFS: false,
         runningDijkstra: false,
         runningManhattanDijkstra: false,
         pathExists: false,
-        parent: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(null))),
-        distances: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(Infinity))),
+        parent: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null))),
+        distances: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity))),
         shortestPath: [],
         buildingWall: false,
         startTime: null,
@@ -325,8 +327,8 @@ const slice = createSlice({
       }
     },
     initializeRandomMaze: (state) => {
-      const init = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row, indexRow) => {
-        return [...Array(DEFAULT_GRAPH_DIMENSION_X)].map((cell, indexCell) => indexRow % 2 ? 0 : (indexCell % 2) ? 0 : 1)
+      const init = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row, indexRow) => {
+        return [...Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X)].map((cell, indexCell) => indexRow % 2 ? 0 : (indexCell % 2) ? 0 : 1)
       });
 
       const unionMap = new Map();
@@ -396,14 +398,14 @@ const slice = createSlice({
         endNode: '',
         endNodeSelected: false,
         stack: [],
-        visited: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(false))),
+        visited: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(false))),
         runningDFS: false,
         runningBFS: false,
         runningDijkstra: false,
         runningManhattanDijkstra: false,
         pathExists: false,
-        parent: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(null))),
-        distances: [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(Infinity))),
+        parent: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null))),
+        distances: [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity))),
         shortestPath: [],
         buildingWall: false,
         startTime: null,
@@ -444,9 +446,9 @@ const slice = createSlice({
     },
     dfsGraph: (state) => {
       const stack = [state.startNode];
-      const visited = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(false)));
-      const parent = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(null)));
-      const distances = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
+      const visited = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(false)));
+      const parent = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null)));
+      const distances = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
       const shortestPath = [];
 
       return {
@@ -491,9 +493,9 @@ const slice = createSlice({
     },
     bfsGraph: (state) => {
       const stack = [state.startNode];
-      const visited = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(false)));
-      const parent = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(null)));
-      const distances = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
+      const visited = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(false)));
+      const parent = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null)));
+      const distances = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
       const shortestPath = [];
 
       return {
@@ -538,9 +540,9 @@ const slice = createSlice({
     },
     dijkstraGraph: (state) => {
       const stack = [state.startNode];
-      const visited = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(false)));
-      const parent = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(null)));
-      const distances = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
+      const visited = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(false)));
+      const parent = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null)));
+      const distances = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
       const shortestPath = [];
 
       const startNodeRowCol = state.startNode.split(',');
@@ -565,9 +567,9 @@ const slice = createSlice({
     },
     manhattanDijkstraGraph: (state) => {
       const stack = [state.startNode];
-      const visited = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(false)));
-      const parent = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(null)));
-      const distances = [...Array(DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
+      const visited = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(false)));
+      const parent = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null)));
+      const distances = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
       const shortestPath = [];
 
       const startNodeRowCol = state.startNode.split(',');
@@ -672,6 +674,52 @@ const slice = createSlice({
         visited: newDijkstraState.visited,
         parent: newDijkstraState.parent,
         distances: newDijkstraState.distances
+      };
+    },
+    setRow: (state, action) => {
+      const rows = action.payload;
+      if (isNaN(rows) || Number(rows) % 2 === 0) {
+        return { 
+          ... state,
+          numRows: Number(rows)
+        };
+      }
+      
+      const newNodes = [...Array(Number(rows))].map(row => new Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(1));
+      const visited = [...Array(Number(rows))].map(row => new Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(false));
+      const parent = [...Array(Number(rows))].map(row => new Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null));
+      const distances = [...Array(Number(rows))].map(row => new Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X));
+
+      return {
+        ...state,
+        nodes: newNodes,
+        visited,
+        parent,
+        distances,
+        numRows: Number(rows)
+      };
+    },
+    setCol: (state, action) => {
+      const columns = action.payload;
+      if (isNaN(columns) || Number(columns) % 2 === 0) {
+        return { 
+          ... state,
+          numCols: Number(columns)
+        };
+      }
+      
+      const newNodes = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map(row => new Array(Number(columns) || DEFAULT_GRAPH_DIMENSION_X).fill(1));
+      const visited = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map(row => new Array(Number(columns) || DEFAULT_GRAPH_DIMENSION_X).fill(false));
+      const parent = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map(row => new Array(Number(columns) || DEFAULT_GRAPH_DIMENSION_X).fill(null));
+      const distances = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map(row => new Array(Number(columns) || DEFAULT_GRAPH_DIMENSION_X));
+
+      return {
+        ...state,
+        nodes: newNodes,
+        visited,
+        parent,
+        distances,
+        numCols: Number(columns)
       };
     }
   }

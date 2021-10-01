@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import GraphNode from './GraphNode';
-import { Box, Button, ButtonGroup, collapseClasses, Container } from '@mui/material';
+import { Box, Button, ButtonGroup, TextField, Container } from '@mui/material';
 import { makeStyles } from '@material-ui/core';
 import { graphActions } from '../slices/graphSlice';
 import PropTypes from 'prop-types';
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   actionbar: {
     justifyContent: 'start',
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     height: '100%',
     padding: 20,
     width: '100%',
@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     border: '4px dashed blue'
   },
   graph: {
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     display: 'flex',
     height: '100%',
     flexDirection: 'row',
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex'
   },
   actionButtonGroup: {
-    justifyContent: 'center',
+    justifyContent: 'left',
     display: 'flex',
     flexDirection: 'row'
   },
@@ -77,8 +77,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     flexWrap: 'wrap',
     alignItems: 'flex-start',
-    overflowY: 'scroll',
-    scrollBehavior: 'smooth',
     boxShadow: '3px 3px 3px #000000'
   },
   infoRow: {
@@ -105,6 +103,12 @@ const useStyles = makeStyles(theme => ({
     padding: '3px',
     transform: 'rotate(135deg)',
     webkitTransform: 'rotate(135deg)'
+  },
+  actionText: {
+    marginRight: '20px !important',
+    '& .Mui-focused': {
+      color: `${theme.palette.primary.main} !important`
+    }
   }
 }));
 
@@ -113,7 +117,7 @@ const Graph = () => {
   const classes = useStyles();
 
   const nodes = useSelector((state) => state.graph.nodes, shallowEqual);
-  const { runningDFS, runningBFS, runningDijkstra, runningManhattanDijkstra, startNode, startNodeSelected, endNode, endNodeSelected, pathExists, shortestPath, startTime, endTime } = useSelector((state) => state.graph);
+  const { numRows, numCols, runningDFS, runningBFS, runningDijkstra, runningManhattanDijkstra, startNode, startNodeSelected, endNode, endNodeSelected, pathExists, shortestPath, startTime, endTime } = useSelector((state) => state.graph);
 
   const initializeEmpty = () => dispatch(graphActions.initializeEmptyGraph());
   const initializeRandomGraph = () => dispatch(graphActions.initializeRandomGraph());
@@ -124,6 +128,8 @@ const Graph = () => {
   const dijkstraGraph = () => dispatch(graphActions.dijkstraGraph());
   const manhattanDijkstraGraph = () => dispatch(graphActions.manhattanDijkstraGraph());
   const startAddWalls = () => dispatch(graphActions.startAddingWalls());
+  const setRow = (event) => dispatch(graphActions.setRow(event.target.value));
+  const setColumn = (event) => dispatch(graphActions.setCol(event.target.value));
 
   useEffect(() => {
     if (runningDFS) {
@@ -161,6 +167,9 @@ const Graph = () => {
     }
   }, [runningManhattanDijkstra, dispatch]);
 
+  const errorRows = isNaN(numRows) || (numRows % 2) === 0 || numRows <= 1 || numRows > 40;
+  const errorCols = isNaN(numCols) || (numCols % 2) === 0 || numCols <= 1 || numCols > 80;
+
   return (
     <Container className={classes.root} maxWidth={false}>
       <Box className={classes.navbar}>Visualize your Problem</Box>
@@ -175,13 +184,9 @@ const Graph = () => {
           <Button variant='contained' className={classes.actionButton} onClick={initializeRandomMaze}>
             Random Kruskal's Maze
           </Button>
-        </ButtonGroup>
-        <ButtonGroup className={classes.actionButtonGroup}>
           <Button variant='contained' className={classes.actionButton} onClick={startAddWalls}>
             Add Wall
           </Button>
-        </ButtonGroup>
-        <ButtonGroup className={classes.actionButtonGroup}>
           <Button variant='contained' className={classes.actionButton} onClick={dfsGraph}>
             DFS Traversal
           </Button>
@@ -195,6 +200,31 @@ const Graph = () => {
             A* Path with Manhattan
           </Button>
         </ButtonGroup>
+        <Box className={classes.actionButtonGroup}>
+          <TextField
+            className={classes.actionText}
+            variant='standard'
+            label='Number Rows'
+            onChange={setRow}
+            value={numRows}
+            error={errorRows}
+            helperText={errorRows ? 'Invalid Row  Entry' : ''}
+          />
+          <TextField
+          className={classes.actionText}
+            variant='standard'
+            label='Number Columns'
+            onChange={setColumn}
+            value={numCols}
+            error={errorCols}
+            helperText={errorCols ? 'Invalid Column  Entry' : ''}
+          />
+          <TextField
+            className={classes.actionText}
+            variant='standard'
+            label='Number Walls To Break'
+          />
+        </Box>
       </Box>
       <Box className={classes.info}>
         <Box className={classes.graph}>

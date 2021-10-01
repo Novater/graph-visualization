@@ -7,14 +7,13 @@ import { graphActions } from '../slices/graphSlice';
 import { Box, Button, ButtonGroup, Container } from '@mui/material';
 import { 
   DEFAULT_GRAPH_DIMENSION_X,
+  DEFAULT_GRAPH_DIMENSION_Y,
   DEFAULT_SCREEN_X,
   DEFAULT_SCREEN_Y
 } from '../config/index';
 
 const useStyles = makeStyles(theme => ({
   blockedNode: {
-    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
-    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
     borderColor: theme.palette.secondary.main,
@@ -22,8 +21,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.primary.main
   },
   emptyNode: {
-    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
-    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
     borderColor: theme.palette.secondary.main,
@@ -31,8 +28,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 5
   },
   highlightedNode: {
-    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
-    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
     borderColor: theme.palette.secondary.main,
@@ -40,8 +35,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 5
   },
   startNode: {
-    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
-    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
     borderColor: theme.palette.secondary.main,
@@ -49,8 +42,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 5    
   },
   endNode: {
-    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
-    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
     borderColor: theme.palette.secondary.main,
@@ -58,8 +49,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 5    
   },
   pathNode: {
-    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
-    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
     borderColor: theme.palette.secondary.main,
@@ -67,8 +56,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 5    
   },
   stackNode: {
-    width: DEFAULT_SCREEN_X / DEFAULT_GRAPH_DIMENSION_X,
-    height: DEFAULT_SCREEN_Y / DEFAULT_GRAPH_DIMENSION_X,
     display: 'inline-block',
     border: '2px solid',
     borderColor: theme.palette.secondary.main,
@@ -85,7 +72,9 @@ const GraphNode = ({ id }) => {
 
   const node = useSelector((state) => state.graph.nodes[idXY[0]][idXY[1]]);
   const visited = useSelector((state) => state.graph.visited[idXY[0]][idXY[1]]);
-  const { startNode, startNodeSelected, endNode, endNodeSelected, shortestPath, stack, buildingWall } = useSelector((state) => state.graph);
+  const { startNode, startNodeSelected, endNode, endNodeSelected, shortestPath, stack, buildingWall, numRows, numCols } = useSelector((state) => state.graph);
+
+
 
   const isNodeStartNode = (id) => id === startNode;
   const isNodeEndNode = (id) => id === endNode;
@@ -123,7 +112,7 @@ const GraphNode = ({ id }) => {
   };
 
   return (
-    <svg onClick={() => { buildingWall ? addWall(id) : (startNodeSelected ? selectEndNode(id) : selectStartNode(id)) }} id={id} className={nodeType(node, visited, id)}>
+    <svg height={DEFAULT_SCREEN_Y / (numRows || DEFAULT_GRAPH_DIMENSION_Y) } width={DEFAULT_SCREEN_X / (numCols || DEFAULT_GRAPH_DIMENSION_X) } onClick={() => { buildingWall ? addWall(id) : (startNodeSelected ? selectEndNode(id) : selectStartNode(id)) }} id={id} className={nodeType(node, visited, id)}>
     </svg>
   );
 };
@@ -132,4 +121,4 @@ GraphNode.propTypes = {
   children: PropTypes.any
 };
 
-export default GraphNode;
+export default React.memo(GraphNode);
