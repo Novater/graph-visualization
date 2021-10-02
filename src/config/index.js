@@ -10,6 +10,6 @@ export const DEFAULT_EDGE_SIZE = 8;
 export const DEFAULT_ALPHA = 0.0001;
 export const DEFAULT_SCREEN_X = 1100;
 export const DEFAULT_SCREEN_Y = 540;
-export const MANHATTAN_FACTOR = 50;
+export const MANHATTAN_FACTOR = 1;
 
 export default {};

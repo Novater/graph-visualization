@@ -2,18 +2,23 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import GraphNode from './GraphNode';
-import { Box, Button, ButtonGroup, TextField, Container } from '@mui/material';
+import { 
+  Box,
+  Button,
+  ButtonGroup,
+  Container,
+  Grid,
+  TextField
+} from '@mui/material';
 import { makeStyles } from '@material-ui/core';
 import { graphActions } from '../slices/graphSlice';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { DEFAULT_GRAPH_DIMENSION_Y } from '../config';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    justifyContent: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100% !important',
+    height: '99vh',
     width: '100% !important',
     padding: '0px !important',
     margin: '0px !important'
@@ -23,16 +28,18 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.dark,
     color: theme.palette.primary.main,
     fontFamily: 'bold',
-    boxShadow: '3px 3px 3px #000000'
+    boxShadow: '3px 3px 3px #000000',
+    height: '2%'
   },
   actionbar: {
     justifyContent: 'start',
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
-    padding: 20,
+    height: '16%',
+    padding: '2%',
     width: '100%',
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.secondary.main,
+    boxSizing: 'border-box'
   },
   actionButton: {
     backgroundColor: `${theme.palette.primary.dark} !important`,
@@ -47,16 +54,18 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     display: 'flex',
     height: '100%',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    maxWidth: '1500px'
+    width: '100%',
+    flexDirection: 'column',
+    flexWrap: 'wrap'
   },
   graphRow: {
     justifyContent: 'center',
-    display: 'flex'
+    display: 'flex',
+    width: '100%'
   },
   actionButtonGroup: {
     justifyContent: 'left',
+    height: '50%',
     display: 'flex',
     flexDirection: 'row'
   },
@@ -64,15 +73,16 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     display: 'flex',
     flexDirection: 'row',
-    height: '100%',
-    boxShadow: '3px 3px 3px #000000'
+    height: '83%',
+    boxShadow: '3px 3px 3px #000000',
+    flexGrow: 1
   },
   textSection: {
-    backgroundColor: '#f5f5dc',
+    backgroundColor: '#F5F5DC',
     padding: 30,
     marginLeft: 5,
     width: '100%',
-    height: 630,
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     flexWrap: 'wrap',
@@ -111,6 +121,9 @@ const useStyles = makeStyles(theme => ({
     }
   }
 }));
+const areEqual = (prevProps, currProps) => {
+  return true;
+};
 
 const Graph = () => {
   const dispatch = useDispatch();
@@ -167,8 +180,8 @@ const Graph = () => {
     }
   }, [runningManhattanDijkstra, dispatch]);
 
-  const errorRows = isNaN(numRows) || (numRows % 2) === 0 || numRows <= 1 || numRows > 40;
-  const errorCols = isNaN(numCols) || (numCols % 2) === 0 || numCols <= 1 || numCols > 80;
+  const errorRows = isNaN(numRows) || (numRows % 2) === 0 || numRows <= 1;
+  const errorCols = isNaN(numCols) || (numCols % 2) === 0 || numCols <= 1;
 
   return (
     <Container className={classes.root} maxWidth={false}>
@@ -226,12 +239,12 @@ const Graph = () => {
           />
         </Box>
       </Box>
-      <Box className={classes.info}>
-        <Box className={classes.graph}>
+      <Grid container className={classes.info}>
+        <Grid item className={classes.graph} xs={9}>
         {
           nodes.map((row, idxRow) => { 
             return (
-              <Box key={idxRow} className={classes.graphRow}>{ 
+              <Box key={idxRow} className={classes.graphRow} height={`${100 / numRows || DEFAULT_GRAPH_DIMENSION_Y}%`}>{ 
                 row.map((cell, idxCol) => {
                   const idCell = `${idxRow},${idxCol}`
                   return <GraphNode key={idCell} id={idCell}></GraphNode> }
@@ -240,8 +253,8 @@ const Graph = () => {
             );
           })
         }
-        </Box>
-        <Box className={classes.textSection}>
+        </Grid>
+        <Grid item className={classes.textSection} xs={3}>
           <Box width='100%' marginBottom='10px'><b>Path:</b></Box>
           <Box marginBottom='20px' className={classes.pathInfo}>
             {
@@ -265,8 +278,8 @@ const Graph = () => {
             <b>{pathExists ? 'A path exists!' : ''}</b><br /> 
             <b>{pathExists ? `Time elapsed in seconds: ${moment.duration(endTime.diff(startTime)).asSeconds().toFixed(2)}` : ``}</b>
           </Box>
-        </Box>
-      </Box>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

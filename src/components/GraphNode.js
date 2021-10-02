@@ -1,8 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch, useRef, useEffect } from 'react-redux';
 import { graphActions } from '../slices/graphSlice';
 import { Box, Button, ButtonGroup, Container } from '@mui/material';
 import { 
@@ -64,24 +63,26 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const GraphNode = ({ id }) => {
+const areEqual = (prevProps, currProps) => {
+  return true;
+};
+
+const GraphNode = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const idXY = id.split(',');
+  const idXY = props.id.split(',');
 
   const node = useSelector((state) => state.graph.nodes[idXY[0]][idXY[1]]);
   const visited = useSelector((state) => state.graph.visited[idXY[0]][idXY[1]]);
   const { startNode, startNodeSelected, endNode, endNodeSelected, shortestPath, stack, buildingWall, numRows, numCols } = useSelector((state) => state.graph);
-
-
 
   const isNodeStartNode = (id) => id === startNode;
   const isNodeEndNode = (id) => id === endNode;
   const isPathNode = (id) => shortestPath.indexOf(id) >= 0;
   const isStackNode = (id) => stack.indexOf(id) >= 0;
   const isNodeEmpty = (node) => node === 1;
-  const pathNumber = shortestPath.indexOf(id) >= 0 ? shortestPath.indexOf(id) + 1 : '';
+  const pathNumber = shortestPath.indexOf(props.id) >= 0 ? shortestPath.indexOf(props.id) + 1 : '';
   const selectStartNode = (action) => dispatch(graphActions.selectStartNode(action));
   const selectEndNode = (action) => dispatch(graphActions.selectEndNode(action));
   const addWall = (action) => {
@@ -112,7 +113,7 @@ const GraphNode = ({ id }) => {
   };
 
   return (
-    <svg height={DEFAULT_SCREEN_Y / (numRows || DEFAULT_GRAPH_DIMENSION_Y) } width={DEFAULT_SCREEN_X / (numCols || DEFAULT_GRAPH_DIMENSION_X) } onClick={() => { buildingWall ? addWall(id) : (startNodeSelected ? selectEndNode(id) : selectStartNode(id)) }} id={id} className={nodeType(node, visited, id)}>
+    <svg height='100%' width={`${100 / (numCols || DEFAULT_GRAPH_DIMENSION_X) }%`} onClick={() => { buildingWall ? addWall(props.id) : (startNodeSelected ? selectEndNode(props.id) : selectStartNode(props.id)) }} id={props.id} className={nodeType(node, visited, props.id)}>
     </svg>
   );
 };
@@ -121,4 +122,4 @@ GraphNode.propTypes = {
   children: PropTypes.any
 };
 
-export default React.memo(GraphNode);
+export default GraphNode;
