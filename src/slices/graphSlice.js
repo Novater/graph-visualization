@@ -27,7 +27,8 @@ const initialState = {
     startTime: null,
     endTime: null,
     numRows: DEFAULT_GRAPH_DIMENSION_Y,
-    numCols: DEFAULT_GRAPH_DIMENSION_X
+    numCols: DEFAULT_GRAPH_DIMENSION_X,
+    dialogOpen: false
 };
 
 const oneDFSStep = (startNode, endNode, nodes, stack, visited) => {
@@ -412,6 +413,53 @@ const slice = createSlice({
         endTime: null
       }
     },
+    openCustomTab: (state) => ({
+      ...state,
+      dialogOpen: true
+    }),
+    closeCustomTab: (state) => ({
+      ...state,
+      dialogOpen: false
+    }),
+    initializeCustomGraph: (state, action) => {
+      try {
+        const JSONGraph = JSON.parse(action.payload);
+        console.log(JSONGraph);
+        const rows = JSONGraph.length;
+        const cols = JSONGraph[0].length;
+        let init = [...Array(JSONGraph.length)].map((row => Array(JSONGraph[0].length).fill(0)));
+        for (let i = 0; i < JSONGraph.length; i += 1) {
+          for (let j = 0; j < JSONGraph[i].length; j += 1) {
+            init[i][j] = JSONGraph[i][j];
+          }
+        }
+        return {
+          ...state,
+          nodes: init,
+          startNode: '',
+          startNodeSelected: false,
+          endNode: '',
+          endNodeSelected: false,
+          stack: [],
+          visited: [...Array(rows)].map((row => Array(cols).fill(false))),
+          runningDFS: false,
+          runningBFS: false,
+          runningDijkstra: false,
+          runningManhattanDijkstra: false,
+          pathExists: false,
+          parent: [...Array(rows)].map((row => Array(cols).fill(null))),
+          distances: [...Array(rows)].map((row => Array(cols).fill(Infinity))),
+          shortestPath: [],
+          buildingWall: false,
+          startTime: null,
+          endTime: null,
+          numRows: rows,
+          numCols: cols
+        };
+      } catch (e) {
+        console.log(e);
+      }
+    },
     selectStartNode: (state, action) => ({
       ...state,
       startNode: action.payload,
@@ -450,7 +498,7 @@ const slice = createSlice({
       const parent = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null)));
       const distances = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
       const shortestPath = [];
-
+      const currentTime = moment();
       return {
         ...state,
         runningDFS: true,
@@ -461,7 +509,8 @@ const slice = createSlice({
         visited,
         parent,
         distances,
-        shortestPath
+        shortestPath,
+        startTime: currentTime
       };
     },
     stepDFS: (state) => {
@@ -479,10 +528,12 @@ const slice = createSlice({
         };
       }
       if (newDFSState.pathExists) {
+        const currentTime = moment();
         return {
           ...state,
           runningDFS: false,
-          pathExists: true
+          pathExists: true,
+          endTime: currentTime
         };
       }
       return {
@@ -497,7 +548,7 @@ const slice = createSlice({
       const parent = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(null)));
       const distances = [...Array(state.numRows || DEFAULT_GRAPH_DIMENSION_Y)].map((row => Array(state.numCols || DEFAULT_GRAPH_DIMENSION_X).fill(Infinity)));
       const shortestPath = [];
-
+      const currentTime = moment();
       return {
         ...state,
         runningBFS: true,
@@ -508,7 +559,8 @@ const slice = createSlice({
         visited,
         parent,
         distances,
-        shortestPath
+        shortestPath,
+        startTime: currentTime
       };
     },
     stepBFS: (state) => {
@@ -526,10 +578,12 @@ const slice = createSlice({
         };
       }
       if (newBFSState.pathExists) {
+        const currentTime = moment();
         return {
           ...state,
           runningBFS: false,
-          pathExists: true
+          pathExists: true,
+          endTime: currentTime
         };
       }
       return {

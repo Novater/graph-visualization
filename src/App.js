@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './assets/css/App.css';
-import Graph from './components/Graph';
+import GraphVisualization from './views/GraphVisualization';
 import { Helmet } from 'react-helmet';
 import { MuiThemeProvider, createTheme } from '@material-ui/core';
 
@@ -25,8 +25,8 @@ function App() {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <Graph>
-      </Graph>
+      <GraphVisualization>
+      </GraphVisualization>
     </MuiThemeProvider>
   );
 }

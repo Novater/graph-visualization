@@ -1,14 +1,11 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Grow } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch, useRef, useEffect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { graphActions } from '../slices/graphSlice';
-import { Box, Button, ButtonGroup, Container } from '@mui/material';
+
 import { 
-  DEFAULT_GRAPH_DIMENSION_X,
-  DEFAULT_GRAPH_DIMENSION_Y,
-  DEFAULT_SCREEN_X,
-  DEFAULT_SCREEN_Y
+  DEFAULT_GRAPH_DIMENSION_X
 } from '../config/index';
 
 const useStyles = makeStyles(theme => ({
@@ -62,10 +59,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 5    
   }
 }));
-
-const areEqual = (prevProps, currProps) => {
-  return true;
-};
 
 const GraphNode = (props) => {
   const classes = useStyles();
