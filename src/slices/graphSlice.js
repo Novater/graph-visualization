@@ -454,7 +454,8 @@ const slice = createSlice({
           startTime: null,
           endTime: null,
           numRows: rows,
-          numCols: cols
+          numCols: cols,
+          dialogOpen: false
         };
       } catch (e) {
         console.log(e);
